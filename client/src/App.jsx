@@ -1,15 +1,16 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard.jsx';
+import InterviewPrep from './pages/InterviewPrep';
 
 function App() {
   return (
-    <div className="bg-green-600 text-white text-center p-8 text-3xl rounded-xl mt-10">
-      ✅ Tailwind is working perfectly!
-    </div>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/interview/:sessionId" element={<InterviewPrep />} />
+    </Routes>
   );
 }
 
-
-export default App
+export default App;

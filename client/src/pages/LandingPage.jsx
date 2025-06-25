@@ -28,7 +28,7 @@ export default function LandingPage() {
             className="px-4 py-2  bg-white text-indigo-600 rounded-lg font-medium shadow"
             onClick={() => setShowSignup(true)}
           >
-            Sign Up
+            SignUp
           </button>
         </div>
       </header>

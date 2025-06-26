@@ -2,6 +2,9 @@ import bcrypt from "bcryptjs"; // For comparing hashed passwords
 import jwt from "jsonwebtoken"; // For generating JWT
 import User from "../models/UserModel.js"; // User model
 
+// @desc    Register a new user
+// @route   POST /api/auth/signup
+// @access  Public
 const signupUser = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
@@ -39,6 +42,9 @@ const signupUser = async (req, res) => {
   }
 } 
 
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -80,4 +86,11 @@ const loginUser = async (req, res) => {
   }
 }
 
-export { signupUser, loginUser};
+// @desc    Get user profile
+// @route   GET /api/auth/profile
+// @access  Private (Requires JWT)
+const getUserProfile = async (req, res) => {
+  res.status(200).json(req.user);
+}
+
+export { signupUser, loginUser, getUserProfile};

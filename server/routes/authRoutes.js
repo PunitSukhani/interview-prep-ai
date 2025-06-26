@@ -4,13 +4,19 @@ import verifyToken from "../middleware/authMiddleware.js";
 
 const router = express.Router(); 
 
-//Signup
+// @desc    Register a new user
+// @route   POST /api/auth/signup
+// @access  Public
 router.post("/signup", signupUser);
 
-//Login
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 router.post("/login", loginUser)
 
-//Get User Profile
+// @desc    Get user profile
+// @route   GET /api/auth/profile
+// @access  Private (Requires JWT)
 router.get("/profile", verifyToken, getUserProfile);
 
 export default router;

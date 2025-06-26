@@ -1,4 +1,6 @@
-import User from '../models/UserModel.js';
+import bcrypt from "bcryptjs"; // For comparing hashed passwords
+import jwt from "jsonwebtoken"; // For generating JWT
+import User from "../models/UserModel.js"; // User model
 
 const signupUser = async (req, res) => {
   try {
@@ -15,13 +17,17 @@ const signupUser = async (req, res) => {
       return res.status(409).json({ message: "User already exists" });
     }
 
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create new user
     const newUser = await User.create({
       fullName,
       email,
-      password
+      password : hashedPassword,
     });
 
+    //Return user data without password
     res.status(201).json({
       _id : newUser._id,
       fullName: newUser.fullName,
@@ -33,4 +39,45 @@ const signupUser = async (req, res) => {
   }
 } 
 
-export { signupUser };
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if(!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    //Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user._id }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: '1h' }
+    );
+
+    //Return user data and token
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      token,
+    });
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+export { signupUser, loginUser};

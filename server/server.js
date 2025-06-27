@@ -1,13 +1,13 @@
-import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
 import cors from 'cors';
 import {connectDB} from './config/db.js'; 
 import authRoutes from './routes/authRoutes.js';
-import sessionRoutes from './routes/sessionRoutes.js';  
-import questionRoutes from './routes/questionRoutes.js';
+import sessionRoutes from './routes/sessionRoutes.js';
+import questionRoutes from './routes/questionRoutes.js';  
+import aiRoutes from './routes/aiRoutes.js';
 
-
-dotenv.config();
 connectDB();
 
 const app = express();
@@ -24,6 +24,7 @@ app.use('/test', (req,res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/session', sessionRoutes);
 app.use('/api/questions', questionRoutes);
+app.use('/api/ai', aiRoutes);
 
 
 

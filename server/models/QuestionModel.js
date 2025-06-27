@@ -14,13 +14,13 @@ const questionSchema = new mongoose.Schema({
     type: String, // Ai-generated answer
     default: "",
   },
-  note: {
-    type: String,
-    default: "", // User's personal notes
-  },
   isPinned: {
     type: Boolean,
     default: false,
+  },
+  note: {
+    type: String,
+    default: "", // User's personal notes
   },
 }, {
   timestamps: true,

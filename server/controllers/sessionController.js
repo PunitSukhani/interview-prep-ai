@@ -1,4 +1,4 @@
-import Session from "../models/sessionModel.js";
+import Session from "../models/SessionModel.js";
 import Question from "../models/QuestionModel.js";
 
 const createSession = async (req, res) => {

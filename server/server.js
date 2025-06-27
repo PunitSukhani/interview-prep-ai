@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import {connectDB} from './config/db.js'; 
 import authRoutes from './routes/authRoutes.js';
-import interviewRoutes from './routes/sessionRoutes.js';
+import sessionRoutes from './routes/sessionRoutes.js';  
+import questionRoutes from './routes/questionRoutes.js';
+
 
 dotenv.config();
 connectDB();
@@ -20,7 +22,9 @@ app.use('/test', (req,res) => {
   res.send("API is running...");
 }) ;
 app.use('/api/auth', authRoutes);
-app.use('/api/session', interviewRoutes);
+app.use('/api/session', sessionRoutes);
+app.use('/api/questions', questionRoutes);
+
 
 
 app.listen(PORT, () => {

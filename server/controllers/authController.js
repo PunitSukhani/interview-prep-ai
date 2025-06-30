@@ -27,11 +27,19 @@ const signupUser = async (req, res) => {
       password : hashedPassword,
     });
 
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: newUser._id }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: '1D' }
+    );
+    
     //Return user data without password
     res.status(201).json({
       _id : newUser._id,
       fullName: newUser.fullName,
       email: newUser.email,
+      token,
     })
   } catch (error) {
     console.error("Error signing up user:", error);

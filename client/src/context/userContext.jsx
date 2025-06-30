@@ -1,13 +1,12 @@
 import React, { createContext, useState, useEffect } from "react";
-import axiosInstance from "../utils/axiosInstance";
-import { API_PATHS } from "../constants/apiPaths";
+import axiosInstance from "../utils/axiosInstance.js";
+import API_PATHS from "../utils/apiPaths.js";
 
 export const UserContext = createContext();
 
-const UserProvider = ({ children }) => {
-
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // New state to track loading
+  const [loading, setLoading] = useState(true); // State to manage global loading state
 
   useEffect(() => {
     if (user) return;

@@ -4,8 +4,8 @@ import SignupPopup from "../components/SignupPopup.jsx";
 import logo from "../assets/hero-img.png";
 
 export default function LandingPage() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
+  const [showLogin, setShowLogin] = useState(false); // State to control login popup visibility
+  const [showSignup, setShowSignup] = useState(false); // State to control signup popup visibility
 
   return (
     <div

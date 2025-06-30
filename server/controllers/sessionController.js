@@ -3,12 +3,12 @@ import Question from "../models/QuestionModel.js";
 
 const createSession = async (req, res) => {
   try {
-    const { role, experience, skills, description } = req.body;
+    const { role, experience, topicsToFocus, description } = req.body;
     const userId = req.user._id;
 
     // Validation
-    if (!role || !experience || !skills) {
-      return res.status(400).json({ success: false, message: "Role, experience and skills are required." });
+    if (!role || !experience || !topicsToFocus) {
+      return res.status(400).json({ success: false, message: "Role, experience and topicsToFocus are required." });
     }
 
     // Session creation (questions will be filled in next step with AI)
@@ -16,7 +16,7 @@ const createSession = async (req, res) => {
       user: userId,
       role,
       experience,
-      skills,
+      topicsToFocus,
       description,
       questions: [],
     });

@@ -4,7 +4,7 @@ import verifyToken from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// @route   POST /api/interview/create
+// @route   POST /api/sessions/create
 // @desc    Create a new session
 // @access  Private
 router.post('/create', verifyToken, createSession);

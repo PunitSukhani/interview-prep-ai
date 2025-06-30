@@ -1,6 +1,6 @@
 import { useState } from "react";
-import LoginPopup from "../components/LoginPopup.jsx";
-import SignupPopup from "../components/SignupPopup.jsx";
+import LoginPopup from "../components/auth/LoginPopup.jsx";
+import SignupPopup from "../components/auth/SignupPopup.jsx";
 import logo from "../assets/hero-img.png";
 
 export default function LandingPage() {

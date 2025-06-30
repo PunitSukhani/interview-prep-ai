@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axiosInstance.js";
-import API_PATHS from "../utils/apiPaths.js";
-import { UserContext } from "../context/userContext.jsx";
+import axiosInstance from "../../utils/axiosInstance.js";
+import API_PATHS from "../../utils/apiPaths.js";
+import { UserContext } from "../../context/userContext.jsx";
 
 export default function SignupPopup({ onClose }) {
   const [fullName, setFullName] = useState("");

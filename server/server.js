@@ -22,7 +22,7 @@ app.use('/test', (req,res) => {
   res.send("API is running...");
 }) ;
 app.use('/api/auth', authRoutes);
-app.use('/api/session', sessionRoutes);
+app.use('/api/sessions', sessionRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/ai', aiRoutes);
 

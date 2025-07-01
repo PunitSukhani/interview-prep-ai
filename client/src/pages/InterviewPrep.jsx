@@ -65,24 +65,39 @@ const InterviewPrep = () => {
   // Pin/unpin, explain, note update as before…
   const handleTogglePin = async (qid) => {
     try {
-      await axiosInstance.patch(API_PATHS.QUESTION.TOGGLE_PIN(qid));
+      await axiosInstance.post(API_PATHS.QUESTION.TOGGLE_PIN(qid));
       await fetchSessionDetails();
     } catch (e) {
       toast.error("Pin toggle failed");
     }
   };
   const handleExplain = async (qid) => {
-    try {
-      await axiosInstance.post(API_PATHS.AI.GENERATE_EXPLANATION, { questionId: qid });
-      toast.success("Explanation added");
-      await fetchSessionDetails();
-    } catch (e) {
-      toast.error("Explain failed");
+  setWorking(true);
+  const toastId = toast.loading("Generating explanation…");
+  try {
+    const questionObj = sessionData.questions.find(q => q._id === qid);
+
+    if (!questionObj || !questionObj.question) {
+      throw new Error("Question text not found for explanation.");
     }
-  };
+
+    await axiosInstance.post(API_PATHS.AI.GENERATE_EXPLANATION, {
+      questionId: qid,            // Send the ID
+      question: questionObj.question, // Send the question text
+    });
+
+    toast.success("Explanation added!", { id: toastId });
+    await fetchSessionDetails();
+  } catch (e) {
+    toast.error("Failed to generate explanation", { id: toastId });
+    console.error("handleExplain error:", e);
+  } finally {
+    setWorking(false);
+  }
+};
   const handleNoteUpdate = async (qid, note) => {
     try {
-      await axiosInstance.patch(API_PATHS.QUESTION.UPDATE_NOTE(qid), { note });
+      await axiosInstance.post(API_PATHS.QUESTION.UPDATE_NOTE(qid), { note });
       toast.success("Note saved");
       await fetchSessionDetails();
     } catch (e) {

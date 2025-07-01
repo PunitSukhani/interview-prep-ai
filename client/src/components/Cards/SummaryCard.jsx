@@ -2,7 +2,7 @@
 import React from "react";
 
 const SummaryCard = ({
-  colors = "bg-gray-100",
+  bg = "",
   role = "",
   experience = "",
   topicsToFocus = "",
@@ -14,7 +14,8 @@ const SummaryCard = ({
 }) => {
   return (
     <div
-      className={`p-4 rounded shadow cursor-pointer ${colors}`}
+      className="p-4 rounded shadow cursor-pointer"
+      style={{ background: bg }}
       onClick={onSelect}
     >
       <div className="flex justify-between items-start mb-2">

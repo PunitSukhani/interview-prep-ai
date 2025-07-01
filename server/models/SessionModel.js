@@ -18,6 +18,10 @@ const sessionSchema = new mongoose.Schema({
     type: [String], 
     required: true,
   },
+  topicsToFocus: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String, 
   },

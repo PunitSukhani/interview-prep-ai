@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import moment from "moment";
-import toast from "react-hot-toast";
+import moment from "moment"; // For date formatting
+import toast from "react-hot-toast"; // For notifications
 
 import DashboardLayout from "../components/layouts/DashboardLayout.jsx";
 import SummaryCard from "../components/Cards/SummaryCard.jsx";
@@ -55,7 +55,7 @@ const Dashboard = () => {
           {sessions.map((data, index) => (
             <SummaryCard
               key={data?._id}
-              colors={CARD_BG[index % CARD_BG.length]}
+              bg={CARD_BG[index % CARD_BG.length].bgcolor}
               role={data?.role || ""}
               topicsToFocus={data?.topicsToFocus || ""}
               experience={data?.experience || "-"}

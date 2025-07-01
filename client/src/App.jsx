@@ -3,6 +3,7 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard.jsx';
 import InterviewPrep from './pages/InterviewPrep';
 import { UserProvider } from './context/userContext.jsx'
+// import TestQuestionCard from './pages/test'; 
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/interview/:sessionId" element={<InterviewPrep />} />
+        <Route path="/interview-prep/:sessionId" element={<InterviewPrep />} />
+        {/* <Route path="/test" element={<TestQuestionCard />} /> */}
       </Routes>
     </UserProvider>
   );

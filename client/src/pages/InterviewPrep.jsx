@@ -1,3 +1,4 @@
+// src/pages/InterviewPrep.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import moment from "moment";
@@ -11,65 +12,81 @@ const InterviewPrep = () => {
   const { sessionId } = useParams();
   const [sessionData, setSessionData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
+  const [working, setWorking] = useState(false);
 
+  // Fetch session + its saved questions
   const fetchSessionDetails = async () => {
     try {
       const res = await axiosInstance.get(API_PATHS.SESSION.GET_ONE(sessionId));
-      setSessionData(res.data?.data);
-    } catch (error) {
-      toast.error("Failed to load session data");
-      console.error("Error fetching session:", error);
+      // depending on your API shape:
+      setSessionData(res.data.data || res.data.session);
+    } catch (err) {
+      toast.error("Failed to load session");
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const generateMoreQuestions = async () => {
-    setGenerating(true);
-    const toastId = toast.loading("Generating more questions...");
+  // Generate (or regenerate) questions: AI -> then save to session
+  const generateQuestions = async () => {
+    if (!sessionData) return;
+    setWorking(true);
+    const toastId = toast.loading("Generating questions…");
     try {
-      await axiosInstance.post(API_PATHS.QUESTION.ADD, { sessionId });
-      toast.success("New questions added!", { id: toastId });
-      fetchSessionDetails();
-    } catch (error) {
+      // 1) Ask AI for Q&A JSON array
+      const aiRes = await axiosInstance.post(API_PATHS.AI.GENERATE_QUESTIONS, {
+        role: sessionData.role,
+        experience: sessionData.experience,
+        topicsToFocus: sessionData.topicsToFocus,
+        numberOfQuestions: 10,
+      });
+      const generated = aiRes.data.questions;
+      if (!Array.isArray(generated)) {
+        throw new Error("AI returned bad format");
+      }
+
+      // 2) Persist those questions under this session
+      await axiosInstance.post(API_PATHS.QUESTION.ADD, {
+        sessionId,
+        questions: generated,
+      });
+
+      toast.success("Questions generated and saved!", { id: toastId });
+      await fetchSessionDetails();
+    } catch (err) {
       toast.error("Failed to generate questions", { id: toastId });
-      console.error("Generate error:", error);
+      console.error("generateQuestions error:", err);
     } finally {
-      setGenerating(false);
+      setWorking(false);
     }
   };
 
-  const handleTogglePin = async (questionId) => {
+  // Pin/unpin, explain, note update as before…
+  const handleTogglePin = async (qid) => {
     try {
-      await axiosInstance.patch(API_PATHS.QUESTION.TOGGLE_PIN(questionId));
-      toast.success("Updated pin status");
-      fetchSessionDetails();
-    } catch (error) {
-      toast.error("Failed to update pin status");
-      console.error("Pin error:", error);
+      await axiosInstance.patch(API_PATHS.QUESTION.TOGGLE_PIN(qid));
+      await fetchSessionDetails();
+    } catch (e) {
+      toast.error("Pin toggle failed");
     }
   };
-
-  const handleExplain = async (questionId) => {
+  const handleExplain = async (qid) => {
     try {
-      const res = await axiosInstance.post(API_PATHS.AI.GENERATE_EXPLANATION, { questionId });
-      toast.success("Explanation generated");
-      fetchSessionDetails();
-    } catch (error) {
-      toast.error("Failed to generate explanation");
-      console.error("Explain error:", error);
+      await axiosInstance.post(API_PATHS.AI.GENERATE_EXPLANATION, { questionId: qid });
+      toast.success("Explanation added");
+      await fetchSessionDetails();
+    } catch (e) {
+      toast.error("Explain failed");
     }
   };
-
-  const handleNoteUpdate = async (questionId, newNote) => {
+  const handleNoteUpdate = async (qid, note) => {
     try {
-      await axiosInstance.patch(API_PATHS.QUESTION.UPDATE_NOTE(questionId), { note: newNote });
-      toast.success("Note updated");
-      fetchSessionDetails();
-    } catch (error) {
-      toast.error("Failed to update note");
-      console.error("Note error:", error);
+      await axiosInstance.patch(API_PATHS.QUESTION.UPDATE_NOTE(qid), { note });
+      toast.success("Note saved");
+      await fetchSessionDetails();
+    } catch (e) {
+      toast.error("Note save failed");
     }
   };
 
@@ -77,47 +94,49 @@ const InterviewPrep = () => {
     fetchSessionDetails();
   }, [sessionId]);
 
-  if (loading) return <div className="p-6">Loading session...</div>;
+  if (loading) return <div className="p-6">Loading session…</div>;
+
+  const hasQs = sessionData?.questions?.length > 0;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-2">{sessionData.role}</h1>
+      <h1 className="text-2xl font-bold mb-2">{sessionData.role}</h1>
       <p className="text-sm text-gray-600 mb-4">
-        Experience: {sessionData.experience} • Focus: {sessionData.topicsToFocus} • Last updated: {moment(sessionData.updatedAt).format("Do MMM YYYY")}
+        {sessionData.experience} • {sessionData.topicsToFocus} • Last updated{" "}
+        {moment(sessionData.updatedAt).format("Do MMM YYYY")}
       </p>
 
-      <div className="mb-6">
+      <div className="flex gap-4 mb-6">
         <button
-          onClick={generateMoreQuestions}
-          disabled={generating}
+          onClick={generateQuestions}
+          disabled={working}
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >
-          {generating ? "Generating..." : "Generate More Questions"}
+          {working ? "Working…" : "Generate More"}
         </button>
       </div>
+  
 
-      <div className="mt-4">
-        <h2 className="text-lg font-medium mb-2">Questions</h2>
-        {sessionData.questions && sessionData.questions.length > 0 ? (
-          <ul className="space-y-4">
-            {sessionData.questions.map((q) => (
-              <li key={q._id}>
-                <QuestionCard
-                  question={q.question}
-                  answer={q.answer}
-                  note={q.note}
-                  isPinned={q.isPinned}
-                  onPin={() => handleTogglePin(q._id)}
-                  onExplain={() => handleExplain(q._id)}
-                  onUpdateNote={(newNote) => handleNoteUpdate(q._id, newNote)}
-                />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No questions found.</p>
-        )}
-      </div>
+      <h2 className="text-lg font-semibold mb-2">Questions</h2>
+      {!hasQs ? (
+        <p>No questions yet.</p>
+      ) : (
+        <ul className="space-y-4">
+          {sessionData.questions.map((q) => (
+            <li key={q._id}>
+              <QuestionCard
+                question={q.question}
+                answer={q.answer}
+                note={q.note}
+                isPinned={q.isPinned}
+                onPin={() => handleTogglePin(q._id)}
+                onExplain={() => handleExplain(q._id)}
+                onUpdateNote={(n) => handleNoteUpdate(q._id, n)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

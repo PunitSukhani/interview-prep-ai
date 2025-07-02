@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs"; // For comparing hashed passwords
 import jwt from "jsonwebtoken"; // For generating JWT
-import User from "../models/UserModel.js"; // User model
+import User from "../models/UserModel.js"; // User model for database operations
 
 const signupUser = async (req, res) => {
   try {

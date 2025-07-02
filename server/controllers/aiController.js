@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { questionAnswerPrompt, conceptExplainPrompt } from "../utils/prompt.js";
 import dotenv from "dotenv";
+import Question from "../models/QuestionModel.js";
 dotenv.config(); // Loads environment variables from .env
 
 // Initialize Gemini AI client with API key from environment
@@ -96,10 +97,10 @@ const generateInterviewQuestions = async (req, res) => {
 // @access  Private
 const generateConceptExplanation = async (req, res) => {
   try {
-    const { question } = req.body;
+    const { questionId, question } = req.body;
 
     // Validate required field
-    if (!question) {
+    if (!questionId || !question) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -120,16 +121,36 @@ const generateConceptExplanation = async (req, res) => {
     }
 
     const { json, error } = tryParseJSON(text);
+    
+    let explanation = "";
 
-    if (json) {
-      res.status(200).json({ explanation: json });
+    if (json && typeof json === "object") {
+      // Try common formats like: { explanation: "..." } or just a plain string
+      if (typeof json.explanation === "string") {
+        explanation = json.explanation;
+      } else {
+        // fallback to full stringified object
+        explanation = JSON.stringify(json);
+      }
     } else {
-      res.status(500).json({
-        message: "Gemini did not return valid JSON",
-        raw: text,
-        error,
-      });
+      explanation = text;
     }
+
+    const existingQuestion = await Question.findById(questionId);
+
+    if (!existingQuestion) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    const newAnswer = `${existingQuestion.answer || ""}\n\nExplanation:\n${explanation}`;
+
+    const updatedQuestion = await Question.findByIdAndUpdate(
+      questionId,
+      { answer: newAnswer },
+      { new: true }
+    );
+
+    return res.status(200).json({ question: updatedQuestion });
   } catch (error) {
     res.status(500).json({
       message: "Failed to generate explanation",

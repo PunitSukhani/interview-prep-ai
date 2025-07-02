@@ -39,7 +39,7 @@ const InterviewPrep = () => {
         role: sessionData.role,
         experience: sessionData.experience,
         topicsToFocus: sessionData.topicsToFocus,
-        numberOfQuestions: 10,
+        numberOfQuestions: 3,
       });
       const generated = aiRes.data.questions;
       if (!Array.isArray(generated)) {
@@ -114,7 +114,7 @@ const InterviewPrep = () => {
   const hasQs = sessionData?.questions?.length > 0;
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 p-6">
       <h1 className="text-2xl font-bold mb-2">{sessionData.role}</h1>
       <p className="text-sm text-gray-600 mb-4">
         {sessionData.experience} • {sessionData.topicsToFocus} • Last updated{" "}

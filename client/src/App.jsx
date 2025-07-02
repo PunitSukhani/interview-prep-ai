@@ -12,7 +12,6 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/interview-prep/:sessionId" element={<InterviewPrep />} />
-        {/* <Route path="/test" element={<TestQuestionCard />} /> */}
       </Routes>
     </UserProvider>
   );

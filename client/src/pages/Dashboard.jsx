@@ -49,41 +49,63 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto pt-6 pb-10 px-4">
-        {/* Sessions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sessions.map((data, index) => (
-            <SummaryCard
-              key={data?._id}
-              bg={CARD_BG[index % CARD_BG.length].bgcolor}
-              role={data?.role || ""}
-              topicsToFocus={data?.topicsToFocus || ""}
-              experience={data?.experience || "-"}
-              questions={data?.questions?.length || "-"}
-              description={data?.description || ""}
-              lastUpdated={
-                data?.updatedAt
-                  ? moment(data.updatedAt).format("Do MMM YYYY")
-                  : ""
-              }
-              onSelect={() => navigate(`/interview-prep/${data?._id}`)}
-              onDelete={() => setOpenDeleteAlert({ open: true, data })}
-            />
-          ))}
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-blue-100 py-8">
+        <div className="container mx-auto px-4 max-w-7xl">
+          {/* Header Section */}
+          <div className="mb-10 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">Interview Sessions</h1>
+              <p className="mt-2 text-gray-600">Manage and track your interview preparation</p>
+            </div>
+            <button
+              onClick={() => setOpenCreateModal(true)}
+              className="btn-primary flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              New Session
+            </button>
+          </div>
 
-        {/* Add New Button */}
-        <div className="mt-10 flex justify-center">
-          <button
-            onClick={() => setOpenCreateModal(true)}
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Add New Session
-          </button>
+          {/* Sessions Grid */}
+          {sessions.length === 0 ? (
+            <div className="text-center py-16">
+              <h3 className="text-lg font-medium text-gray-900">No sessions yet</h3>
+              <p className="mt-1 text-gray-500">Get started by creating your first interview session</p>
+              <button
+                onClick={() => setOpenCreateModal(true)}
+                className="btn-primary mt-4"
+              >
+                Create Your First Session
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sessions.map((data, index) => (
+                <SummaryCard
+                  key={data?._id}
+                  colors={CARD_BG[index % CARD_BG.length].bgcolor}
+                  role={data?.role || ""}
+                  topicsToFocus={data?.topicsToFocus || ""}
+                  experience={data?.experience || "-"}
+                  questions={data?.questions?.length || "-"}
+                  description={data?.description || ""}
+                  lastUpdated={
+                    data?.updatedAt
+                      ? moment(data.updatedAt).format("Do MMM YYYY")
+                      : ""
+                  }
+                  onSelect={() => navigate(`/interview-prep/${data?._id}`)}
+                  onDelete={() => setOpenDeleteAlert({ open: true, data })}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Create Session Modal */}
+      {/* Modals */}
       <Modal
         isOpen={openCreateModal}
         onClose={() => setOpenCreateModal(false)}
@@ -97,14 +119,13 @@ const Dashboard = () => {
         />
       </Modal>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         isOpen={openDeleteAlert.open}
         onClose={() => setOpenDeleteAlert({ open: false, data: null })}
-        title="Delete Confirmation"
+        title="Delete Session"
       >
         <DeleteAlertContent
-          content="Are you sure you want to delete this session?"
+          content="Are you sure you want to delete this interview session? This action cannot be undone."
           onDelete={() => deleteSession(openDeleteAlert.data)}
         />
       </Modal>

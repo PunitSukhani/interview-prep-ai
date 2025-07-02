@@ -3,6 +3,7 @@ import { BASE_URL } from "./apiPaths.js";
 
 const axiosInstance = axios.create({
   baseURL: "https://interview-prep-ai-40ln.onrender.com/api",
+  // baseURL: BASE_URL,
   timeout: 80000,
   headers: {
     "Content-Type": "application/json",

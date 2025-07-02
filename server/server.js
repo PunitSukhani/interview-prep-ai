@@ -14,13 +14,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({ origin: 'https://interview-prep-ai-ruddy.vercel.app/', credentials: true }));
+app.use(cors({
+  origin: ['https://interview-prep-ai-ruddy.vercel.app'],
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes
-app.use('/test', (req,res) => {
-  res.send("API is running...");
-}) ;
 app.use('/api/auth', authRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/questions', questionRoutes);

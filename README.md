@@ -24,7 +24,7 @@
 
 > Clean homepage with a quick overview and call-to-action for users.
 
-![Landing Page](./assets/screenshots/landing-page.png)
+![Landing Page](./client/src/assets/screenshots/landing-page.png)
 
 ---
 
@@ -32,7 +32,7 @@
 
 > View and manage your sessions with role, experience, and topic-specific cards.
 
-![Dashboard](./assets/screenshots/dashboard.png)
+![Dashboard](./client/src/assets/screenshots/dashboard.png)
 
 ---
 
@@ -40,7 +40,7 @@
 
 > View questions, pin them, add notes, and learn more using AI.
 
-![Session Detail](./assets/screenshots/session-detail.png)
+![Session Detail](./client/src/assets/screenshots/session-detail.png)
 
 ---
 
